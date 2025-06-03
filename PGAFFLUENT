@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Vendor Registration Form</title>
+  <style>
+    form#vendor-form {
+      max-width: 700px;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 12px;
+      font-family: sans-serif;
+      margin: auto;
+    }
+    form#vendor-form h3 {
+      margin-top: 30px;
+      color: #1a1a1a;
+    }
+    form#vendor-form label {
+      display: block;
+      margin-top: 15px;
+    }
+    form#vendor-form input,
+    form#vendor-form select,
+    form#vendor-form textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    form#vendor-form button {
+      margin-top: 25px;
+      background: #0078d7;
+      color: #fff;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #successModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.6);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    #successModal > div {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 400px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<form id="vendor-form" enctype="multipart/form-data" method="POST">
+  <h2>แบบฟอร์มเปิดบัญชี Vendor</h2>
+
+  <label for="vendorType">ประเภทของกิจการ *</label>
+  <select name="vendorType" id="vendorType" onchange="toggleSections()" required>
+    <option value="">-- โปรดเลือก --</option>
+    <option value="individual">บุคคลธรรมดา</option>
+    <option value="corporate">นิติบุคคล (บริษัท/หจก./สมาคม ฯลฯ)</option>
+  </select>
+
+  <!-- บุคคลธรรมดา -->
+  <div id="individualSection" style="display:none; margin-top:20px;">
+    <h3>ข้อมูลบุคคลธรรมดา</h3>
+    <label>ชื่อ-นามสกุล:</label>
+    <input type="text" name="individual_name">
+
+    <label>หมายเลขบัตรประชาชน:</label>
+    <input type="text" name="citizen_id">
+
+    <label>ที่อยู่ตามบัตรประชาชน:</label>
+    <textarea name="individual_address" id="individual_address"></textarea>
+
+    <div style="margin-top: 15px;">
+      <input type="checkbox" id="individualDiffAddressCheckbox" onclick="toggleIndividualAddressField()">
+      <label for="individualDiffAddressCheckbox">ต้องการกรอกที่อยู่จัดส่งเอกสารเพิ่มเติม</label>
+    </div>
+
+    <div id="individual_addresstpost_container" style="margin-top: 10px; display: none;">
+      <label>ที่อยู่จัดส่งเอกสาร:</label>
+      <textarea name="individual_addresstpost" id="individual_addresstpost"></textarea>
+    </div>
+
+    <label>เบอร์โทรศัพท์:</label>
+    <input type="tel" name="individual_phone">
+
+    <label>อีเมล:</label>
+    <input type="email" name="individual_email">
+
+    <label>สำเนาบัตรประชาชน:</label>
+    <input type="file" name="upload_idcard">
+
+    <label>สำเนาหน้าสมุดบัญชี:</label>
+    <input type="file" name="upload_bankbook">
+
+    <label>หนังสือหักภาษี (ถ้ามี):</label>
+    <input type="file" name="upload_tax">
+  </div>
+
+  <!-- นิติบุคคล -->
+  <div id="corporateSection" style="display:none; margin-top:20px;">
+    <h3>ข้อมูลนิติบุคคล</h3>
+    <label>ชื่อบริษัท (ไทย):</label>
+    <input type="text" name="company_name_th">
+
+    <label>เลขประจำตัวผู้เสียภาษี:</label>
+    <input type="text" name="tax_id">
+
+    <label>ที่อยู่บริษัท:</label>
+    <textarea name="company_address" id="company_address"></textarea>
+
+    <div style="margin-top: 15px;">
+      <input type="checkbox" id="differentAddressCheckbox" onclick="toggleAddressField()">
+      <label for="differentAddressCheckbox">ต้องการกรอกที่อยู่จัดส่งเอกสารเพิ่มเติม</label>
+    </div>
+
+    <div id="company_addresstpost_container" style="margin-top: 10px; display: none;">
+      <label>ที่อยู่จัดส่งเอกสาร:</label>
+      <textarea name="company_addresstpost" id="company_addresstpost"></textarea>
+    </div>
+
+    <label>ประเภทนิติบุคคล:</label>
+    <select name="company_type">
+      <option value="">-- เลือก --</option>
+      <option>บริษัทจำกัด</option>
+      <option>ห้างหุ้นส่วนจำกัด</option>
+      <option>มูลนิธิ</option>
+      <option>สมาคม</option>
+      <option>อื่น ๆ</option>
+    </select>
+
+    <label>ชื่อผู้ติดต่อ:</label>
+    <input type="text" name="contact_name">
+
+    <label>ตำแหน่ง:</label>
+    <input type="text" name="contact_position">
+
+    <label>เบอร์โทร:</label>
+    <input type="tel" name="contact_phone">
+
+    <label>อีเมล:</label>
+    <input type="email" name="contact_email">
+
+    <h2>รายละเอียดบัญชีธนาคาร</h2>
+    <label>ชื่อบัญชี:</label>
+    <input type="text" name="account_name">
+
+    <label>เลขที่บัญชี:</label>
+    <input type="text" name="account_number">
+
+    <label>ธนาคาร:</label>
+    <input type="text" name="bank_name">
+
+    <label>สาขา:</label>
+    <input type="text" name="bank_branch">
+
+    <label>ประเภทบัญชี:</label>
+    <input type="text" name="account_type">
+
+    <label>หนังสือรับรองบริษัท:</label>
+    <input type="file" name="upload_cert">
+
+    <label>ภ.พ.20:</label>
+    <input type="file" name="upload_pp20">
+
+    <label>สำเนาหน้าสมุดบัญชี:</label>
+    <input type="file" name="upload_bankbook_corp">
+
+    <label>สำเนาบัตร ปชช. ผู้มีอำนาจลงนาม:</label>
+    <input type="file" name="upload_signatory_id">
+  </div>
+
+  <!-- ยืนยันและส่ง -->
+  <h3>ยืนยันและส่งฟอร์ม</h3>
+  <label>ลงชื่อผู้ดำเนินการ:</label>
+  <input type="text" name="signature">
+
+  <label>ตำแหน่ง:</label>
+  <input type="text" name="position">
+
+  <label>วันที่:</label>
+  <input type="date" name="submit_date">
+
+  <div style="margin-top: 25px;">
+    <input type="checkbox" id="consentCheckbox" required>
+    <label for="consentCheckbox">
+      ข้าพเจ้ายินยอมให้บริษัทเก็บรวบรวม ใช้ และเปิดเผยข้อมูลส่วนบุคคล ตาม
+      <a href="#" target="_blank">นโยบายความเป็นส่วนตัว (PDPA)</a>
+    </label>
+  </div>
+
+  <br><br>
+  <button type="submit">ส่งแบบฟอร์ม</button>
+</form>
+
+<!-- Modal -->
+<div id="successModal">
+  <div>
+    <h3>ส่งแบบฟอร์มสำเร็จ</h3>
+    <p>ขอบคุณที่กรอกข้อมูล ระบบได้รับข้อมูลของคุณเรียบร้อยแล้ว</p>
+    <button onclick="closeModal()">ปิด</button>
+  </div>
+</div>
+
+<script>
+  function toggleSections() {
+    const val = document.getElementById("vendorType").value;
+    document.getElementById("individualSection").style.display = val === "individual" ? "block" : "none";
+    document.getElementById("corporateSection").style.display = val === "corporate" ? "block" : "none";
+  }
+
+  function toggleAddressField() {
+    const checkbox = document.getElementById("differentAddressCheckbox");
+    const container = document.getElementById("company_addresstpost_container");
+    const field = document.getElementById("company_addresstpost");
+    container.style.display = checkbox.checked ? "block" : "none";
+    if (!checkbox.checked) field.value = "";
+  }
+
+  function toggleIndividualAddressField() {
+    const checkbox = document.getElementById("individualDiffAddressCheckbox");
+    const container = document.getElementById("individual_addresstpost_container");
+    const field = document.getElementById("individual_addresstpost");
+    container.style.display = checkbox.checked ? "block" : "none";
+    if (!checkbox.checked) field.value = "";
+  }
+
+  document.getElementById("vendor-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    if (!document.getElementById("consentCheckbox").checked) {
+      alert("กรุณายินยอมตามนโยบาย PDPA ก่อนส่งแบบฟอร์ม");
+      return;
+    }
+
+    const formData = new FormData(event.target);
+    const data = new URLSearchParams();
+    for (const [key, value] of formData.entries()) {
+      data.append(key, value);
+    }
+
+    fetch("https://script.google.com/macros/s/AKfycbyPgmeIVHS4IDCMsCXu52FhRLiMn50gV_TWIpUmJucq_J1MqxMIekLoXvLe1JIqf1XH/exec", {
+      method: "POST",
+      body: data
+    })
+    .then(res => res.text())
+    .then(result => {
+      if (result === "OK") {
+        document.getElementById("successModal").style.display = "flex";
+        event.target.reset();
+        toggleSections();
+        toggleAddressField();
+        toggleIndividualAddressField();
+      } else {
+        alert("เกิดข้อผิดพลาด: " + result);
+      }
+    })
+    .catch(err => {
+      alert("เกิดข้อผิดพลาด: " + err);
+    });
+  });
+
+  function closeModal() {
+    document.getElementById("successModal").style.display = "none";
+  }
+</script>
+
+</body>
+</html>
